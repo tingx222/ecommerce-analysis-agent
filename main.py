@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from pydantic import BaseModel, Field
 
 app = FastAPI(title="电商经营分析 Agent")
 
@@ -8,4 +9,16 @@ def health():
     return {
         "status": "ok",
         "service": "ecommerce-analysis-agent",
+    }
+
+
+class AnalysisRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=1000)
+
+
+@app.post("/analysis/query")
+def submit_analysis(request: AnalysisRequest):
+    return {
+        "status": "received",
+        "question": request.question,
     }
