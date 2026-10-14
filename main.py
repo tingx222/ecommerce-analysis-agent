@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-from decimal import Decimal
-from sample_orders import ORDERS
+from sales_service import calculate_sales_summary
 
 app = FastAPI(title="电商经营分析 Agent")
 
@@ -28,18 +27,4 @@ def submit_analysis(request: AnalysisRequest):
 
 @app.get("/reports/sales-summary")
 def sales_summary():
-    paid_order_count = 0
-    total_sales = Decimal("0.00")
-
-    for order in ORDERS:
-        if order["status"] == "PAID":
-            paid_order_count += 1
-            total_sales += Decimal(order["amount"])
-
-    return {
-        "paid_order_count": paid_order_count,
-        #str(total_sales) 将金额转成字符串返回，例如 "299.80"
-        "total_sales": str(total_sales),
-        "currency": "CNY",
-        "data_source": "sample",
-    }
+    return calculate_sales_summary()
